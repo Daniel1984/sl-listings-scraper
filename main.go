@@ -42,7 +42,7 @@ func respondWithError(statusCode int, msg string) (events.APIGatewayProxyRespons
 }
 
 func handler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	street := req.PathParameters["street"]
+	street := req.QueryStringParameters["street"]
 
 	if street == "" {
 		return respondWithError(500, "Street name must be present in query params")
