@@ -14,7 +14,7 @@ import (
 	"sort"
 )
 
-func GetPropertiesFromAirbnb(url string, ch chan []byte) {
+func getPropertiesFromAirbnb(url string, ch chan []byte) {
 	httpClient := &http.Client{}
 	userAgentStr := shared.GetUserAgent()
 	req, _ := http.NewRequest(http.MethodGet, url, nil)
@@ -50,17 +50,17 @@ func handler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse,
 
 	streetName := &url.URL{Path: street}
 	encodedStreetName := streetName.String()
-	listingUrl := utils.GetListingsURL(encodedStreetName)
+	listingURL := utils.GetListingsURL(encodedStreetName)
 	channel := make(chan []byte)
 
-	var sectionOffset int = 0
-	var itemsOffset int = 0
-	var scrapeInProgress bool = true
+	var sectionOffset int
+	var itemsOffset int
+	var scrapeInProgress = true
 	var listings model.Listings
 
 	for scrapeInProgress {
-		offsetUrl := fmt.Sprintf("%s%s%d%s%d", listingUrl, "&section_offset=", sectionOffset, "&items_offset=", itemsOffset)
-		go GetPropertiesFromAirbnb(offsetUrl, channel)
+		offsetURL := fmt.Sprintf("%s%s%d%s%d", listingURL, "&section_offset=", sectionOffset, "&items_offset=", itemsOffset)
+		go getPropertiesFromAirbnb(offsetURL, channel)
 		responseBody := <-channel
 		listing := model.Listing{}
 
@@ -68,9 +68,9 @@ func handler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse,
 			continue
 		} else {
 			hometabIndex := sort.Search(len(listing.ExploreTabs), func(i int) bool {
-				tabId := listing.ExploreTabs[i].TabId
+				tabID := listing.ExploreTabs[i].TabId
 				tabName := listing.ExploreTabs[i].TabName
-				return tabId == "home_tab" || tabId == "all_tab" || tabName == "Homes"
+				return tabID == "home_tab" || tabID == "all_tab" || tabName == "Homes"
 			})
 
 			if hometabIndex < len(listing.ExploreTabs) {
