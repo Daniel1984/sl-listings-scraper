@@ -21,7 +21,7 @@ type Listings []struct {
 	} `json:"listing"`
 }
 
-type Listing struct {
+type Address struct {
 	ExploreTabs []struct {
 		TabId    string `json:"tab_id"`
 		TabName  string `json:"tab_name"`

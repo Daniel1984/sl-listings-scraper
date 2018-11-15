@@ -62,24 +62,24 @@ func handler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse,
 		offsetURL := fmt.Sprintf("%s%s%d%s%d", listingURL, "&section_offset=", sectionOffset, "&items_offset=", itemsOffset)
 		go getPropertiesFromAirbnb(offsetURL, channel)
 		responseBody := <-channel
-		listing := model.Listing{}
+		address := model.Address{}
 
-		if err := json.Unmarshal(responseBody, &listing); err != nil {
+		if err := json.Unmarshal(responseBody, &address); err != nil {
 			continue
-		} else {
-			hometabIndex := sort.Search(len(listing.ExploreTabs), func(i int) bool {
-				tabID := listing.ExploreTabs[i].TabId
-				tabName := listing.ExploreTabs[i].TabName
-				return tabID == "home_tab" || tabID == "all_tab" || tabName == "Homes"
-			})
+		}
 
-			if hometabIndex < len(listing.ExploreTabs) {
-				exploreTabs := listing.ExploreTabs[hometabIndex]
-				sectionOffset = exploreTabs.PaginationMetadata.SectionOffset
-				itemsOffset = exploreTabs.PaginationMetadata.ItemsOffset
-				listings = append(listings, exploreTabs.Sections[0].Listings...)
-				scrapeInProgress = exploreTabs.PaginationMetadata.HasNextPage
-			}
+		hometabIndex := sort.Search(len(address.ExploreTabs), func(i int) bool {
+			tabID := address.ExploreTabs[i].TabId
+			tabName := address.ExploreTabs[i].TabName
+			return tabID == "home_tab" || tabID == "all_tab" || tabName == "Homes"
+		})
+
+		if hometabIndex < len(address.ExploreTabs) {
+			exploreTabs := address.ExploreTabs[hometabIndex]
+			sectionOffset = exploreTabs.PaginationMetadata.SectionOffset
+			itemsOffset = exploreTabs.PaginationMetadata.ItemsOffset
+			listings = append(listings, exploreTabs.Sections[0].Listings...)
+			scrapeInProgress = exploreTabs.PaginationMetadata.HasNextPage
 		}
 	}
 
