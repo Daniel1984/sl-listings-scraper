@@ -3,15 +3,16 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"sort"
+
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/scraping-service/shared"
 	"github.com/sl-listings-scraper/model"
 	"github.com/sl-listings-scraper/utils"
-	"io/ioutil"
-	"net/http"
-	"net/url"
-	"sort"
 )
 
 func getPropertiesFromAirbnb(url string, ch chan []byte) {

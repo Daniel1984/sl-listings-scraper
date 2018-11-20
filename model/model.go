@@ -26,7 +26,7 @@ type Address struct {
 		TabId    string `json:"tab_id"`
 		TabName  string `json:"tab_name"`
 		Sections []struct {
-			Listings Listings `json:"listings"`
+			Listings `json:"listings"`
 		} `json:"sections"`
 		PaginationMetadata struct {
 			HasNextPage   bool `json:"has_next_page"`
